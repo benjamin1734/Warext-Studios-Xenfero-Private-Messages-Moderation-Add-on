@@ -2,21 +2,57 @@
 
 XenForo 2.2+ için raporlanan özel konuşma mesajlarını sınırlı ve denetlenebilir şekilde incelemeye yardımcı olan eklenti.
 
-## Güvenlik modeli
+## Uygulanan akış
 
+- Raporlanan conversation mesajı rapor ID'si üzerinden açılır.
 - İlk görünüm yalnızca raporlanan mesajdır.
-- Bağlam erişimi ayrı bir yetki ve gerekçe ile açılır.
-- Varsayılan bağlam penceresi sınırlıdır.
-- Daha geniş geçmiş için kıdemli moderatör onayı gerekir.
-- Başka conversation'lar hiçbir koşulda bu eklentinin kapsamına girmez.
-- Her görüntüleme ve moderasyon işlemi audit log'a yazılır.
-- Mesaj içerikleri eklentiye kopyalanmaz; XenForo'nun mevcut conversation/message kayıtları okunur.
-- Rapor kapandığında geçici bağlam erişimi sona erer.
+- Moderatör gerekçe yazarak 5 mesajlık sınırlı bağlam erişimi açabilir.
+- 5 mesajdan daha geniş erişim ayrı bir talep oluşturur.
+- Geniş erişim için `warn` ve `bypassUserPrivacy` yetkilerine sahip kıdemli moderatör onayı gerekir.
+- Geniş erişim talebi yalnızca aynı conversation ve aynı rapor için geçerlidir.
+- Erişim süreleri sınırlıdır: sınırlı bağlam 30 dakika, geniş bağlam 60 dakika.
+- Her erişim isteği, onay ve görüntüleme için audit kayıtları tutulur.
+- Mesaj içerikleri addon tablolarına kopyalanmaz.
+- Rapor kapandığında erişim kayıtlarının süresi sonlandırılabilir.
 
-## Durum
+## Yönetim URL'si
 
-İlk iskelet oluşturuldu. Rapor entegrasyonu, izinler, bağlam akışı, log ekranı ve testler sonraki adımlarda eklenecektir.
+Raporlanan conversation mesajı için:
 
-## Hedef
+`/warext-pm-moderation/reports/{report_id}/`
+
+Örnek:
+
+`https://forum.example.com/warext-pm-moderation/reports/123/`
+
+Buradaki `123`, XenForo rapor ID'sidir. Kullanıcı bu URL'yi açabilmek için XenForo'nun `general > warn` yetkisine sahip olmalıdır.
+
+## Kurulum
+
+1. `src/addons/Warext/PrivateModeration` klasörünü XenForo kurulumundaki `src/addons/Warext/PrivateModeration` yoluna kopyalayın.
+2. Admin CP > Add-ons bölümünden eklentiyi kurun veya yükseltin.
+3. Moderatör grubunda raporları yönetme ve uyarı yetkilerini kontrol edin.
+4. Geniş bağlam onayı verecek gruba ayrıca XenForo `Bypass user privacy` yetkisini verin.
+5. Kullanıcı aydınlatma metninde raporlanan özel mesaj ve gerekli sınırlı bağlam erişimini açıkça belirtin.
+
+## Güvenlik sınırları
+
+- Rastgele özel konuşma arama veya tarama yoktur.
+- Bir kullanıcının diğer conversations'ları görünmez.
+- Audit log'a mesaj gövdesi yazılmaz.
+- Bağlam erişimi gerekçe olmadan açılamaz.
+- Geniş erişim tek moderatörün anlık yetkisiyle açılamaz; kıdemli onay gerekir.
+
+## Doğrulama
+
+Bu repo XenForo'nun çekirdek kaynak kodunu veya lisanslı bir test kurulumu içermez. Bu nedenle kurulum sonrası test kurulumu üzerinde şu akış doğrulanmalıdır:
+
+- conversation mesajı raporlama
+- report ID ile moderation URL'sine erişim
+- 5 mesajlık bağlam
+- geniş bağlam talebi
+- kıdemli onay
+- süresi dolan erişim
+- kapatılmış raporda erişimin engellenmesi
 
 Bu eklenti hukuki danışmanlık sağlamaz. Kurulumdan önce forumun aydınlatma metni, saklama politikası ve moderatör gizlilik prosedürü ayrıca gözden geçirilmelidir.
