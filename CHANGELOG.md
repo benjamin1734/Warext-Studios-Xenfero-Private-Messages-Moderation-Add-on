@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.4
+
+- Moved Private Messages Moderation to its own top-level Admin CP category.
+- Added a visible comments icon to the category.
+- Added dedicated Admin CP children for the dashboard, context requests and audit logs.
+
 ## 1.2.3
 
 - Fixed XenForo release data generation for cron entries by exporting run_rules as the required JSON/CDATA payload.
