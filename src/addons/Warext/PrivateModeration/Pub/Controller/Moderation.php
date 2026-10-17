@@ -83,7 +83,8 @@ class Moderation extends AbstractController
                 'canApprove' => $this->access()->canApproveExtended(),
                 'canClose' => $report->report_state !== 'closed',
                 'canOpenContext' => $this->access()->canOpenContext(),
-                'canRequestExtended' => $this->access()->canRequestExtended()
+                'canRequestExtended' => $this->access()->canRequestExtended(),
+                'canModerateMessage' => $this->access()->canModerateMessage()
             ]
         );
     }
@@ -172,6 +173,30 @@ class Moderation extends AbstractController
         return $this->redirect($this->buildLink('reports'));
     }
 
+    public function actionDelete(ParameterBag $params)
+    {
+        $this->assertPostOnly();
+        $report = $this->getReport((int) $params->report_id);
+        if (!$this->access()->canModerateMessage())
+        {
+            throw $this->exception($this->noPermission());
+        }
+
+        $message = $this->access()->getMessage($report);
+        $reason = trim((string) $this->filter('reason', 'str'));
+        if (!$message || utf8_strlen($reason) < 10)
+        {
+            return $this->error('Mesaj işlemi için en az 10 karakterlik gerekçe yazmalısınız.');
+        }
+
+        if (!$this->access()->deleteReportedMessage($report, $message, $reason))
+        {
+            return $this->error('Mesaj silinemedi. XenForo içerik silme yetkisini ve rapor durumunu kontrol edin.');
+        }
+
+        return $this->redirect($this->buildLink('reports'));
+    }
+
     protected function renderMessage($message): string
     {
         return \XF::app()->bbCode()->render(
@@ -182,3 +207,4 @@ class Moderation extends AbstractController
         );
     }
 }
+
