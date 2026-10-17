@@ -1,0 +1,12 @@
+{
+    "navigation_id": "warext_pm_moderation_dashboard",
+    "parent_navigation_id": "warext_pm_moderation",
+    "display_order": 10,
+    "link": "warext-pm-moderation/",
+    "icon": "fa-tachometer-alt",
+    "admin_permission_id": "",
+    "debug_only": false,
+    "development_only": false,
+    "hide_no_children": false
+}
+
