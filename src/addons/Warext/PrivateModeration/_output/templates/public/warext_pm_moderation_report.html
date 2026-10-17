@@ -95,3 +95,20 @@
         </div>
     </div>
 </xf:if>
+
+<xf:if is="$canModerateMessage">
+    <div class="block">
+        <div class="block-container">
+            <div class="block-header">Mesaj işlemi</div>
+            <div class="block-body">
+                <p class="u-muted">Bu işlem XenForo'nun kendi içerik silme yetkisini de kontrol eder. İşlem mesajı kaldırır, raporu kapatır ve audit kaydı oluşturur.</p>
+                <form action="{{ link('warext-pm-moderation/reports/delete', $report) }}" method="post">
+                    <xf:csrf />
+                    <xf:textboxrow name="reason" label="İşlem gerekçesi" hint="En az 10 karakter yazın." required="true" />
+                    <xf:submitrow submit="Raporlanan mesajı sil ve raporu kapat" />
+                </form>
+            </div>
+        </div>
+    </div>
+</xf:if>
+
