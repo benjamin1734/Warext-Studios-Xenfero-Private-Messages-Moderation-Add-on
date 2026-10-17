@@ -1,0 +1,13 @@
+{
+    "navigation_id": "warext_pm_moderation",
+    "parent_navigation_id": "content",
+    "display_order": 250,
+    "navigation_type_id": "basic",
+    "enabled": true,
+    "link": "warext-pm-moderation/",
+    "display_condition": "$xf.visitor.is_admin",
+    "extra_attributes": {
+        "icon": "reports"
+    }
+}
+
