@@ -28,7 +28,7 @@
                                 <div class="message-attribution">
                                     <span class="u-muted">Mesaj #{$contextMessage.message_id}</span>
                                 </div>
-                                {$contextMessage.message|raw}
+                                {$contextMessage.message|bb_code('conversation_message', $contextMessage)|raw}
                             </div>
                         </article>
                     </xf:foreach>
