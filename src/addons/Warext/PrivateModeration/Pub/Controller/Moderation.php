@@ -8,6 +8,11 @@ use XF\\Pub\\Controller\\AbstractController;
 
 class Moderation extends AbstractController
 {
+    public function actionIndex(ParameterBag $params)
+    {
+        return $this->actionReport($params);
+    }
+
     protected function access(): ContextAccess
     {
         return new ContextAccess();
