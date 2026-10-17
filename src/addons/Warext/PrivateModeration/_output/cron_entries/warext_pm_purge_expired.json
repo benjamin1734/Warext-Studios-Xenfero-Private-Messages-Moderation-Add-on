@@ -1,0 +1,7 @@
+{
+    "entry_id": "warext_pm_purge_expired",
+    "cron_expression": "0 * * * *",
+    "callback_class": "Warext\\PrivateModeration\\Cron\\PurgeExpired",
+    "callback_method": "run",
+    "active": true
+}
