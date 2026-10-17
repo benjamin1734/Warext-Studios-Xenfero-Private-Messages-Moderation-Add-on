@@ -42,7 +42,7 @@ Buradaki `123`, XenForo rapor ID'sidir. Kullanıcı bu URL'yi açabilmek için a
 
 ## Kurulum
 
-1. `_releases/Warext-PrivateModeration-1.2.0.zip` paketini Admin CP > Add-ons > Install/upgrade bölümünden yükleyin.
+1. `_releases/Warext-PrivateModeration-1.2.1.zip` paketini Admin CP > Add-ons > Install/upgrade bölümünden yükleyin.
 2. Moderatör grubunda `warextPmViewReported` ve `warextPmOpenContext` izinlerini açın.
 3. Geniş bağlam talep edecek gruba `warextPmRequestExtended` verin.
 4. Onaylayacak kıdemli gruba `warextPmApproveExtended` ve XenForo `Bypass user privacy` yetkisini verin.
@@ -60,7 +60,7 @@ Buradaki `123`, XenForo rapor ID'sidir. Kullanıcı bu URL'yi açabilmek için a
 
 ## Release paketleme
 
-Geliştirme çıktısı (`_output`) yalnızca geliştirme içindir. XenForo release paketinde `_data` XML dosyaları ve `hashes.json` bulunmalıdır. Paket üretmek için repo kökünde `tools/Build-Release.ps1` scriptini çalıştırın. Script, `_output` içeriğinden `_data` XML’lerini üretir, `_output` klasörünü release ZIP’ine koymaz ve `hashes.json` oluşturur.
+Geliştirme çıktısı (`_output`) yalnızca geliştirme içindir. XenForo release paketinde `upload/src/addons/Warext/PrivateModeration/` altında `_data` XML dosyaları ve `hashes.json` bulunmalıdır. Paket üretmek için repo kökünde `tools/Build-Release.ps1` scriptini çalıştırın. Script, `_output` içeriğinden `_data` XML’lerini üretir, `_output` klasörünü release ZIP’ine koymaz ve XenForo'nun beklediği upload kökünü oluşturur.
 
 ## Doğrulama
 
