@@ -1,7 +1,18 @@
 {
     "entry_id": "warext_pm_purge_expired",
-    "cron_expression": "0 * * * *",
-    "callback_class": "Warext\\PrivateModeration\\Cron\\PurgeExpired",
-    "callback_method": "run",
+    "cron_class": "Warext\\PrivateModeration\\Cron\\PurgeExpired",
+    "cron_method": "run",
+    "run_rules": {
+        "day_type": "dom",
+        "dom": [
+            -1
+        ],
+        "hours": [
+            -1
+        ],
+        "minutes": [
+            0
+        ]
+    },
     "active": true
 }
