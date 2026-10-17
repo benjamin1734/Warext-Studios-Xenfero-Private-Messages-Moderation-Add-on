@@ -12,5 +12,5 @@ Bu addon aşağıdaki XenForo yüzeylerini kullanır:
 
 Geliştirme çıktısı (`_output`) yalnızca geliştirme içindir. `tools/Build-Release.ps1` scripti bu çıktıyı `_data` XML dosyalarına dönüştürür, `_output` klasörünü release paketinden çıkarır ve `hashes.json` oluşturur.
 
-XenForo resmi geliştirme dokümanında development output dosyalarının development mode için olduğu ve release sırasında `_data` çıktısının kullanılması gerektiği belirtilir. Paket kurulumunda addon install/upgrade işlemi uygulanmalıdır.
+XenForo resmi geliştirme dokümanında development output dosyalarının development mode için olduğu ve release sırasında `_data` çıktısının kullanılması gerektiği belirtilir. Release ZIP'i `upload/src/addons/Warext/PrivateModeration/` kökünü ve bu kökte `hashes.json` dosyasını içerir. Paket kurulumunda addon install/upgrade işlemi uygulanmalıdır.
 
