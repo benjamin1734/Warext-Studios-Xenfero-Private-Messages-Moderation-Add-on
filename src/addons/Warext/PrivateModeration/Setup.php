@@ -3,6 +3,7 @@
 namespace Warext\\PrivateModeration;
 
 use XF\\AddOn\\AbstractSetup;
+use XF\\Db\\Schema\\Alter;
 use XF\\Db\\Schema\\Create;
 
 class Setup extends AbstractSetup
@@ -18,6 +19,7 @@ class Setup extends AbstractSetup
             $table->addColumn('message_id', 'int')->unsigned();
             $table->addColumn('viewer_user_id', 'int')->unsigned();
             $table->addColumn('access_type', 'varchar', 32);
+            $table->addColumn('context_depth', 'smallint')->unsigned()->setDefault(5);
             $table->addColumn('reason', 'text')->nullable();
             $table->addColumn('created_date', 'int')->unsigned();
             $table->addColumn('expires_date', 'int')->unsigned()->setDefault(0);
@@ -49,6 +51,14 @@ class Setup extends AbstractSetup
             $table->addKey(['report_id', 'status'], 'report_status');
             $table->addKey(['conversation_id', 'message_id'], 'conversation_message');
             $table->addKey('requester_user_id');
+        });
+    }
+
+    public function upgrade1000020Step1()
+    {
+        $this->schemaManager()->alterTable('xf_warext_pm_access_log', function(Alter $table)
+        {
+            $table->addColumn('context_depth', 'smallint')->unsigned()->setDefault(5);
         });
     }
 
