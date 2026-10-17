@@ -50,6 +50,29 @@
             </div>
         </div>
     </xf:if>
+    <xf:if is="$pendingRequests">
+        <div class="block">
+            <div class="block-container">
+                <div class="block-header">Bekleyen geniş bağlam talepleri</div>
+                <div class="block-body">
+                    <xf:foreach loop="$pendingRequests" value="$request">
+                        <div class="block-row">
+                            <div><b>İstenen derinlik:</b> {$request.requested_depth}</div>
+                            <div><b>Gerekçe:</b> {$request.reason}</div>
+                            <xf:if is="$canApprove">
+                                <form action="{{ link('warext-pm-moderation/reports/approve', $report) }}" method="post">
+                                    <xf:csrf />
+                                    <input type="hidden" name="request_id" value="{$request.request_id}" />
+                                    <button type="submit" class="button button--primary">Onayla</button>
+                                </form>
+                            </xf:if>
+                        </div>
+                    </xf:foreach>
+                </div>
+            </div>
+        </div>
+    </xf:if>
+
 <xf:else />
     <div class="blockMessage blockMessage--error">Raporlanan conversation mesajı bulunamadı.</div>
 </xf:if>
