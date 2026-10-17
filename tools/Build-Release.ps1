@@ -5,6 +5,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+$utf8 = New-Object System.Text.UTF8Encoding($false)
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 if (-not $RepoRoot) {
     $RepoRoot = (Resolve-Path (Join-Path $scriptRoot '..')).Path
@@ -13,7 +14,7 @@ if (-not $OutputDirectory) {
     $OutputDirectory = Join-Path $RepoRoot '_releases'
 }
 $addonSource = Join-Path $RepoRoot 'src/addons/Warext/PrivateModeration'
-$addonJson = Get-Content (Join-Path $addonSource 'addon.json') -Raw | ConvertFrom-Json
+$addonJson = [System.IO.File]::ReadAllText((Join-Path $addonSource 'addon.json'), $utf8) | ConvertFrom-Json
 $version = [string] $addonJson.version_string
 $versionId = [string] $addonJson.version_id
 $stage = Join-Path ([System.IO.Path]::GetTempPath()) ('warext-pm-release-' + [guid]::NewGuid().ToString('N'))
@@ -45,7 +46,7 @@ function Add-Attribute($doc, $node, [string] $name, [string] $value) {
 $classDoc = New-XmlDocument 'class_extensions'
 $classRoot = $classDoc.DocumentElement
 Get-ChildItem (Join-Path $addonSource '_output/class_extensions/*.json') | ForEach-Object {
-    $item = Get-Content $_.FullName -Raw | ConvertFrom-Json
+    $item = [System.IO.File]::ReadAllText($_.FullName, $utf8) | ConvertFrom-Json
     $node = $classDoc.CreateElement('extension')
     Add-Attribute $classDoc $node 'from_class' $item.from_class
     Add-Attribute $classDoc $node 'to_class' $item.to_class
@@ -59,7 +60,7 @@ $classDoc.Save((Join-Path $packageData 'class_extensions.xml'))
 $cronDoc = New-XmlDocument 'cron'
 $cronRoot = $cronDoc.DocumentElement
 Get-ChildItem (Join-Path $addonSource '_output/cron_entries/*.json') | ForEach-Object {
-    $item = Get-Content $_.FullName -Raw | ConvertFrom-Json
+    $item = [System.IO.File]::ReadAllText($_.FullName, $utf8) | ConvertFrom-Json
     $node = $cronDoc.CreateElement('entry')
     foreach ($name in 'entry_id', 'cron_expression', 'callback_class', 'callback_method') {
         Add-Attribute $cronDoc $node $name ([string] $item.$name)
@@ -73,7 +74,7 @@ $cronDoc.Save((Join-Path $packageData 'cron.xml'))
 $permissionDoc = New-XmlDocument 'permissions'
 $permissionRoot = $permissionDoc.DocumentElement
 Get-ChildItem (Join-Path $addonSource '_output/permissions/*.json') | ForEach-Object {
-    $item = Get-Content $_.FullName -Raw | ConvertFrom-Json
+    $item = [System.IO.File]::ReadAllText($_.FullName, $utf8) | ConvertFrom-Json
     $permissionId = $_.BaseName -replace '^forum-', ''
     $node = $permissionDoc.CreateElement('permission')
     Add-Attribute $permissionDoc $node 'permission_group_id' 'forum'
@@ -88,11 +89,46 @@ Get-ChildItem (Join-Path $addonSource '_output/permissions/*.json') | ForEach-Ob
 }
 $permissionDoc.Save((Join-Path $packageData 'permissions.xml'))
 
+# Admin CP navigation
+$adminNavigationDoc = New-XmlDocument 'admin_navigation'
+$adminNavigationRoot = $adminNavigationDoc.DocumentElement
+Get-ChildItem (Join-Path $addonSource '_output/admin_navigation/*.json') | ForEach-Object {
+    $item = [System.IO.File]::ReadAllText($_.FullName, $utf8) | ConvertFrom-Json
+    $node = $adminNavigationDoc.CreateElement('navigation_entry')
+    foreach ($name in 'navigation_id', 'parent_navigation_id', 'display_order', 'navigation_type_id') {
+        if ($null -ne $item.$name -and [string] $item.$name) {
+            Add-Attribute $adminNavigationDoc $node $name ([string] $item.$name)
+        }
+    }
+    Add-Attribute $adminNavigationDoc $node 'enabled' ($(if ($item.enabled) { '1' } else { '0' }))
+    $payload = [ordered] @{
+        link = [string] $item.link
+        display_condition = [string] $item.display_condition
+        extra_attributes = $item.extra_attributes
+    }
+    [void] $node.AppendChild($adminNavigationDoc.CreateCDataSection(($payload | ConvertTo-Json -Compress -Depth 5)))
+    [void] $adminNavigationRoot.AppendChild($node)
+}
+$adminNavigationDoc.Save((Join-Path $packageData 'admin_navigation.xml'))
+
+# Admin navigation phrases
+$phraseDoc = New-XmlDocument 'phrases'
+$phraseRoot = $phraseDoc.DocumentElement
+Get-ChildItem (Join-Path $addonSource '_output/phrases/*.txt') | ForEach-Object {
+    $node = $phraseDoc.CreateElement('phrase')
+    Add-Attribute $phraseDoc $node 'title' $_.BaseName
+    Add-Attribute $phraseDoc $node 'version_id' $versionId
+    Add-Attribute $phraseDoc $node 'version_string' $version
+    [void] $node.AppendChild($phraseDoc.CreateCDataSection([System.IO.File]::ReadAllText($_.FullName, $utf8)))
+    [void] $phraseRoot.AppendChild($node)
+}
+$phraseDoc.Save((Join-Path $packageData 'phrases.xml'))
+
 # Public and Admin routes
 $routeDoc = New-XmlDocument 'routes'
 $routeRoot = $routeDoc.DocumentElement
 Get-ChildItem (Join-Path $addonSource '_output/routes/*.xml') | ForEach-Object {
-    $routeSource = [xml] (Get-Content $_.FullName -Raw)
+    $routeSource = [xml] ([System.IO.File]::ReadAllText($_.FullName, $utf8))
     foreach ($route in $routeSource.routes.route) {
         $node = $routeDoc.ImportNode($route, $true)
         [void] $routeRoot.AppendChild($node)
@@ -112,7 +148,7 @@ Get-ChildItem (Join-Path $addonSource '_output/templates') -Recurse -File -Filte
     Add-Attribute $templateDoc $node 'title' $_.BaseName
     Add-Attribute $templateDoc $node 'version_id' $versionId
     Add-Attribute $templateDoc $node 'version_string' $version
-    [void] $node.AppendChild($templateDoc.CreateCDataSection((Get-Content $_.FullName -Raw)))
+    [void] $node.AppendChild($templateDoc.CreateCDataSection([System.IO.File]::ReadAllText($_.FullName, $utf8)))
     [void] $templateRoot.AppendChild($node)
 }
 $templateDoc.Save((Join-Path $packageData 'templates.xml'))
@@ -138,3 +174,4 @@ Compress-Archive -Path (Join-Path $stage '*') -DestinationPath $zipPath -Compres
 Remove-Item -LiteralPath $stage -Recurse -Force
 
 Write-Output $zipPath
+
