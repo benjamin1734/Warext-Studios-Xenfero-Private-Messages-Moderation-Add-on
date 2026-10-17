@@ -10,8 +10,11 @@ Bu klasörü XenForo kurulumundaki aynı konuma yerleştirin. XenForo geliştirm
 
 ## Yetkiler
 
-- Raporu görecek moderatörler: XenForo raporları yönetme ve `general > warn`.
-- Geniş bağlam onaylayacak kıdemli moderatörler: `general > warn` ve `general > bypassUserPrivacy`.
+- Raporu görecek moderatörler: addon `warextPmViewReported`.
+- Sınırlı bağlam açacak moderatörler: addon `warextPmOpenContext`.
+- Geniş bağlam talep edecek moderatörler: addon `warextPmRequestExtended`.
+- Geniş bağlam onaylayacak kıdemli moderatörler: addon `warextPmApproveExtended` ve XenForo `general > bypassUserPrivacy`.
+- Audit ekranını görecek yöneticiler: addon `warextPmViewAudit`.
 
 Eklenti tüm özel mesajları taramaz ve başka conversation'lara erişim sağlamaz.
 
@@ -34,3 +37,4 @@ Eklenti tüm özel mesajları taramaz ve başka conversation'lara erişim sağla
 - Yetkisiz hesabın rapor ve onay endpoint'lerine erişemediğini doğrulayın.
 - Süresi geçmiş erişimin bağlam göstermediğini doğrulayın.
 - Kapatılan raporun erişimi engellediğini doğrulayın.
+
