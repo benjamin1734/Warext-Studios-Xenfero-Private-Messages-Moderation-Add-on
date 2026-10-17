@@ -18,7 +18,8 @@ $addonJson = [System.IO.File]::ReadAllText((Join-Path $addonSource 'addon.json')
 $version = [string] $addonJson.version_string
 $versionId = [string] $addonJson.version_id
 $stage = Join-Path ([System.IO.Path]::GetTempPath()) ('warext-pm-release-' + [guid]::NewGuid().ToString('N'))
-$packageAddon = Join-Path $stage 'src/addons/Warext/PrivateModeration'
+$uploadRoot = Join-Path $stage 'upload'
+$packageAddon = Join-Path $uploadRoot 'src/addons/Warext/PrivateModeration'
 $packageData = Join-Path $packageAddon '_data'
 $zipPath = Join-Path $OutputDirectory ('Warext-PrivateModeration-' + $version + '.zip')
 
@@ -159,13 +160,14 @@ New-Item -ItemType Directory -Path $noUpload -Force | Out-Null
 Copy-Item (Join-Path $RepoRoot 'README.md') $noUpload -Force
 Copy-Item (Join-Path $RepoRoot 'docs') $noUpload -Recurse -Force
 
-# XenForo file health hashes cover the uploadable package files, including _data.
+# XenForo expects hashes.json inside the uploadable add-on directory.
+# Hash keys are relative to the upload root, e.g. src/addons/Vendor/AddOn/Setup.php.
 $hashMap = [ordered] @{}
-Get-ChildItem (Join-Path $stage 'src') -Recurse -File | ForEach-Object {
-    $relative = $_.FullName.Substring($stage.Length + 1).Replace([string][char]92, '/')
+Get-ChildItem (Join-Path $uploadRoot 'src') -Recurse -File | ForEach-Object {
+    $relative = $_.FullName.Substring($uploadRoot.Length + 1).Replace([string][char]92, '/')
     $hashMap[$relative] = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
 }
-$hashMap | ConvertTo-Json -Depth 3 | Set-Content (Join-Path $stage 'hashes.json') -Encoding UTF8
+$hashMap | ConvertTo-Json -Depth 3 | Set-Content (Join-Path $packageAddon 'hashes.json') -Encoding UTF8
 
 if (Test-Path $zipPath) {
     Remove-Item -LiteralPath $zipPath -Force
