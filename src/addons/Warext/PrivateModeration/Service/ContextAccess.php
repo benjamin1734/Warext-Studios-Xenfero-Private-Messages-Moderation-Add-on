@@ -12,13 +12,15 @@ class ContextAccess
 
     public function canReview(): bool
     {
-        return \\XF::visitor()->hasPermission('general', 'warn');
+        return \\XF::visitor()->hasPermission('forum', 'warextPmViewReported')
+            || \\XF::visitor()->hasPermission('general', 'warn');
     }
 
     public function canApproveExtended(): bool
     {
-        return \\XF::visitor()->hasPermission('general', 'warn')
-            && \\XF::visitor()->hasPermission('general', 'bypassUserPrivacy');
+        return \\XF::visitor()->hasPermission('forum', 'warextPmApproveExtended')
+            || (\\XF::visitor()->hasPermission('general', 'warn')
+                && \\XF::visitor()->hasPermission('general', 'bypassUserPrivacy'));
     }
 
     public function isConversationReport(Entity $report): bool
