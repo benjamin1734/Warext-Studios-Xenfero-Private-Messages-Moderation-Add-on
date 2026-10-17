@@ -6,6 +6,8 @@ Eklenti kaynak yolu:
 
 `src/addons/Warext/PrivateModeration`
 
+Release ZIP'i Admin CP arşiv yükleyicisine doğrudan verilebilir; ZIP içinde `upload/src/addons/Warext/PrivateModeration` bulunur. Manuel kurulumda `upload` klasörünün içeriğini XenForo köküne birleştirin.
+
 Bu klasörü XenForo kurulumundaki aynı konuma yerleştirin. XenForo geliştirme kurulumu kullanıyorsanız `_output` verilerini geliştirici içe aktarma komutuyla içeri alın.
 
 ## Yetkiler
