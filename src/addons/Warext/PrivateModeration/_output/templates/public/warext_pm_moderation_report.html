@@ -1,0 +1,55 @@
+<xf:title>Özel Mesaj Raporu #{$report.report_id}</xf:title>
+
+<xf:if is="$message">
+    <div class="block">
+        <div class="block-container">
+            <div class="block-body">
+                <article class="message">
+                    <div class="message-cell message-cell--main">
+                        <div class="message-attribution">
+                            <span class="message-attribution-main">Raporlanan mesaj</span>
+                            <span class="u-muted">Mesaj #{$message.message_id}</span>
+                        </div>
+                        <div class="message-body">{$messageHtml|raw}</div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+
+    <xf:if is="$activeAccess">
+        <div class="block">
+            <div class="block-container">
+                <div class="block-header">Sınırlı bağlam erişimi aktif</div>
+                <div class="block-body">
+                    <xf:foreach loop="$context" value="$contextMessage">
+                        <article class="message">
+                            <div class="message-cell message-cell--main">
+                                <div class="message-attribution">
+                                    <span class="u-muted">Mesaj #{$contextMessage.message_id}</span>
+                                </div>
+                                {$contextMessage.message|raw}
+                            </div>
+                        </article>
+                    </xf:foreach>
+                </div>
+            </div>
+        </div>
+    <xf:else />
+        <div class="block">
+            <div class="block-container">
+                <div class="block-header">Bağlam erişimi</div>
+                <div class="block-body">
+                    <form action="{{ link('warext-pm-moderation/reports/context', $report) }}" method="post" class="block-body">
+                        <xf:csrf />
+                        <xf:textboxrow name="reason" label="Gerekçe" hint="Yalnızca bu raporla bağlantılı ve gerekli bağlamı açıklayın." required="true" />
+                        <xf:numberboxrow name="depth" value="5" min="1" max="5" label="Mesaj sayısı" />
+                        <xf:submitrow submit="Bağlamı aç" />
+                    </form>
+                </div>
+            </div>
+        </div>
+    </xf:if>
+<xf:else />
+    <div class="blockMessage blockMessage--error">Raporlanan conversation mesajı bulunamadı.</div>
+</xf:if>
