@@ -50,11 +50,29 @@ class Moderation extends AbstractController
     {
         $this->assertPostOnly();
         $requestId = $this->filter('request_id', 'uint');
-        \\XF::db()->update('xf_warext_pm_context_request', [
-            'status' => 'approved',
-            'reviewer_user_id' => (int)\\XF::visitor()->user_id,
-            'reviewed_date' => \\XF::$time
-        ], 'request_id = ? AND status = ?', [$requestId, 'pending']);
+        $db = \\XF::db();
+        $request = $db->fetchRow('SELECT * FROM xf_warext_pm_context_request WHERE request_id = ? AND status = ?', [$requestId, 'pending']);
+        if ($request)
+        {
+            $db->insert('xf_warext_pm_access_log', [
+                'report_id' => (int)$request['report_id'],
+                'request_id' => $requestId,
+                'conversation_id' => (int)$request['conversation_id'],
+                'message_id' => (int)$request['message_id'],
+                'viewer_user_id' => (int)$request['requester_user_id'],
+                'access_type' => 'extended_context',
+                'context_depth' => (int)$request['requested_depth'],
+                'reason' => $request['reason'],
+                'created_date' => \\XF::$time,
+                'expires_date' => \\XF::$time + 3600,
+                'approved_by_user_id' => (int)\\XF::visitor()->user_id
+            ]);
+            $db->update('xf_warext_pm_context_request', [
+                'status' => 'approved',
+                'reviewer_user_id' => (int)\\XF::visitor()->user_id,
+                'reviewed_date' => \\XF::$time
+            ], 'request_id = ? AND status = ?', [$requestId, 'pending']);
+        }
 
         return $this->redirect($this->buildLink('warext-pm-moderation/requests'));
     }
