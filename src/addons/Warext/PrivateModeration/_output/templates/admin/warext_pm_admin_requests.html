@@ -11,6 +11,18 @@
                     · Derinlik {$request.requested_depth}
                     · Durum: {$request.status}
                     <div>{$request.reason}</div>
+                    <xf:if is="$request.status == 'pending'">
+                        <form action="{{ link('warext-pm-moderation/approve') }}" method="post">
+                            <xf:csrf />
+                            <input type="hidden" name="request_id" value="{$request.request_id}" />
+                            <button class="button button--primary" type="submit">Onayla</button>
+                        </form>
+                        <form action="{{ link('warext-pm-moderation/deny') }}" method="post">
+                            <xf:csrf />
+                            <input type="hidden" name="request_id" value="{$request.request_id}" />
+                            <button class="button" type="submit">Reddet</button>
+                        </form>
+                    </xf:if>
                 </div>
             </xf:foreach>
         </div>
