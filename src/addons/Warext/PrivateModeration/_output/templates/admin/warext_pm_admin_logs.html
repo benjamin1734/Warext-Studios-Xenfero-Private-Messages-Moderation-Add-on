@@ -1,0 +1,21 @@
+<xf:title>Özel Mesaj Moderasyon Audit Logları</xf:title>
+
+<div class="block">
+    <div class="block-container">
+        <div class="block-body">
+            <xf:foreach loop="$logs" value="$log">
+                <div class="block-row">
+                    <b>#{$log.access_log_id}</b>
+                    · Rapor #{$log.report_id}
+                    · Conversation #{$log.conversation_id}
+                    · Mesaj #{$log.message_id}
+                    · Görüntüleyen #{$log.viewer_user_id}
+                    · {$log.access_type}
+                    · Başlangıç {{ date_time($log.created_date) }}
+                    · Bitiş {{ date_time($log.expires_date) }}
+                    <div>Gerekçe: {$log.reason}</div>
+                </div>
+            </xf:foreach>
+        </div>
+    </div>
+</div>
