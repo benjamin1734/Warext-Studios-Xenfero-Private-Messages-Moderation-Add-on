@@ -1,0 +1,16 @@
+<xf:title>Özel Mesaj Moderasyonu</xf:title>
+
+<div class="block">
+    <div class="block-container">
+        <div class="block-body">
+            <div class="block-row">Bekleyen talepler: <b>{$stats.pending}</b></div>
+            <div class="block-row">Aktif erişimler: <b>{$stats.active}</b></div>
+            <div class="block-row">Toplam erişim kayıtları: <b>{$stats.logs}</b></div>
+        </div>
+    </div>
+</div>
+
+<xf:pageaction>
+    <xf:button href="{{ link('warext-pm-moderation/requests') }}">Bağlam talepleri</xf:button>
+    <xf:button href="{{ link('warext-pm-moderation/logs') }}">Audit logları</xf:button>
+</xf:pageaction>
