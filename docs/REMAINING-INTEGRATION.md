@@ -8,6 +8,6 @@ Bu addon aşağıdaki XenForo yüzeylerini kullanır:
 - Cron entry: süresi geçmiş erişim ve karar kayıtlarının temizlenmesi
 - Setup schema: erişim ve bağlam talebi tabloları
 
-XenForo development output dosyaları kurulum sırasında import edilmelidir. Release ZIP'i hazırlanırken development output verileri XenForo'nun data XML dosyalarına export edilmelidir.
+Geliştirme çıktısı (`_output`) yalnızca geliştirme içindir. `tools/Build-Release.ps1` scripti bu çıktıyı `_data` XML dosyalarına dönüştürür, `_output` klasörünü release paketinden çıkarır ve `hashes.json` oluşturur.
 
-XenForo resmi geliştirme dokümanında development output dosyalarının development mode için olduğunu ve release sırasında data çıktısının kullanılması gerektiğini belirtir. Kurulumda addon rebuild/import işlemi uygulanmalıdır.
+XenForo resmi geliştirme dokümanında development output dosyalarının development mode için olduğu ve release sırasında `_data` çıktısının kullanılması gerektiği belirtilir. Paket kurulumunda addon install/upgrade işlemi uygulanmalıdır.

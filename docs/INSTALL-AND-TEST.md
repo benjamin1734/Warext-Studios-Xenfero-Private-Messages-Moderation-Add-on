@@ -23,7 +23,7 @@ Eklenti tüm özel mesajları taramaz ve başka conversation'lara erişim sağla
 4. En fazla 5 mesajlık bağlam gerekçeyle 30 dakika açılır.
 5. 5 mesajdan fazla istenirse talep kıdemli onayına düşer.
 6. Onaylı geniş bağlam talebi yalnızca talep eden moderatöre 60 dakika verilir.
-7. Erişim kayıtları `xf_warext_pm_access_log`, talepler `xf_warext_pm_context_request` tablolarında tutulur.
+7. Erişim kayıtları `xf_warext_pm_access_log`, talepler `xf_warext_pm_context_request`, audit olayları `xf_warext_pm_audit_log` tablolarında tutulur.
 
 ## Kurulum sonrası test
 

@@ -1,21 +1,38 @@
 <xf:title>Özel Mesaj Moderasyon Audit Logları</xf:title>
 
+<form action="{{ link('warext-pm-moderation/logs') }}" method="get" class="block">
+    <div class="block-container">
+        <div class="block-body">
+            <xf:numberboxrow name="report_id" value="{$reportId}" label="Rapor ID" />
+            <xf:submitrow submit="Filtrele" />
+        </div>
+    </div>
+</form>
+
 <div class="block">
     <div class="block-container">
         <div class="block-body">
-            <xf:foreach loop="$logs" value="$log">
-                <div class="block-row">
-                    <b>#{$log.access_log_id}</b>
-                    · Rapor #{$log.report_id}
-                    · Conversation #{$log.conversation_id}
-                    · Mesaj #{$log.message_id}
-                    · Görüntüleyen #{$log.viewer_user_id}
-                    · {$log.access_type}
-                    · Başlangıç {{ date_time($log.created_date) }}
-                    · Bitiş {{ date_time($log.expires_date) }}
-                    <div>Gerekçe: {$log.reason}</div>
-                </div>
-            </xf:foreach>
+            <xf:if is="$logs">
+                <xf:foreach loop="$logs" value="$log">
+                    <div class="block-row">
+                        <b>#{$log.audit_id}</b>
+                        · {$log.event_type}
+                        · Rapor #{$log.report_id}
+                        · Aktör #{$log.actor_user_id}
+                        · Conversation #{$log.conversation_id}
+                        · Mesaj #{$log.message_id}
+                        · {{ date_time($log.created_date) }}
+                        <xf:if is="$log.message_ids">
+                            <div>Görüntülenen mesaj ID’leri: {$log.message_ids}</div>
+                        </xf:if>
+                        <xf:if is="$log.reason">
+                            <div>Gerekçe: {$log.reason}</div>
+                        </xf:if>
+                    </div>
+                </xf:foreach>
+            <xf:else />
+                <div class="blockMessage">Audit kaydı bulunamadı.</div>
+            </xf:if>
         </div>
     </div>
 </div>

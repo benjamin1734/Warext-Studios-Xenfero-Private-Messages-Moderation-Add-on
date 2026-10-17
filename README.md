@@ -8,12 +8,14 @@ XenForo 2.2+ için raporlanan özel konuşma mesajlarını sınırlı ve denetle
 - İlk görünüm yalnızca raporlanan mesajdır.
 - Moderatör gerekçe yazarak 5 mesajlık sınırlı bağlam erişimi açabilir.
 - 5 mesajdan daha geniş erişim ayrı bir talep oluşturur.
-- Geniş erişim için `warn` ve `bypassUserPrivacy` yetkilerine sahip kıdemli moderatör onayı gerekir.
+- Geniş erişim için addon `warextPmApproveExtended` ve XenForo `bypassUserPrivacy` yetkilerine sahip kıdemli moderatör onayı gerekir.
 - Geniş erişim talebi yalnızca aynı conversation ve aynı rapor için geçerlidir.
 - Erişim süreleri sınırlıdır: sınırlı bağlam 30 dakika, geniş bağlam 60 dakika.
-- Her erişim isteği, onay ve görüntüleme için audit kayıtları tutulur.
+- Her rapor görüntüleme, bağlam açma, talep, onay, ret, iptal ve rapor kapatma işlemi ayrı audit olayı olarak tutulur.
 - Mesaj içerikleri addon tablolarına kopyalanmaz.
-- Rapor kapandığında erişim kayıtlarının süresi sonlandırılabilir.
+- Audit kaydı yalnızca rapor/conversation/mesaj kimliklerini ve işlem metadatasını içerir; mesaj gövdesi saklanmaz.
+- Rapor kapandığında aktif erişimler ve bekleyen talepler sonlandırılır.
+- Audit logları varsayılan olarak 180 gün, erişim kayıtları ise süresi dolduktan sonra 24 saat tutulur.
 
 ## Yönetim URL'si
 
@@ -25,7 +27,7 @@ Raporlanan conversation mesajı için:
 
 `https://forum.example.com/warext-pm-moderation/reports/123/`
 
-Buradaki `123`, XenForo rapor ID'sidir. Kullanıcı bu URL'yi açabilmek için XenForo'nun `general > warn` yetkisine sahip olmalıdır.
+Buradaki `123`, XenForo rapor ID'sidir. Kullanıcı bu URL'yi açabilmek için addon `warextPmViewReported` yetkisine sahip olmalıdır.
 
 ## Admin CP ve moderatör paneli
 
@@ -34,14 +36,16 @@ Buradaki `123`, XenForo rapor ID'sidir. Kullanıcı bu URL'yi açabilmek için X
 - Bağlam talepleri: `admin.php?warext-pm-moderation/requests/`
 - Audit logları: `admin.php?warext-pm-moderation/logs/`
 - Admin CP üzerinden talepler onaylanabilir/reddedilebilir ve erişimler yönetilebilir.
+- Moderatör panelinden rapor kapatılabilir; kapatma işlemi aktif erişimleri ve bekleyen talepleri iptal eder.
 
 ## Kurulum
 
-1. `src/addons/Warext/PrivateModeration` klasörünü XenForo kurulumundaki `src/addons/Warext/PrivateModeration` yoluna kopyalayın.
-2. Admin CP > Add-ons bölümünden eklentiyi kurun veya yükseltin.
-3. Moderatör grubunda raporları yönetme ve uyarı yetkilerini kontrol edin.
-4. Geniş bağlam onayı verecek gruba ayrıca XenForo `Bypass user privacy` yetkisini verin.
-5. Kullanıcı aydınlatma metninde raporlanan özel mesaj ve gerekli sınırlı bağlam erişimini açıkça belirtin.
+1. `_releases/Warext-PrivateModeration-1.1.0.zip` paketini Admin CP > Add-ons > Install/upgrade bölümünden yükleyin.
+2. Moderatör grubunda `warextPmViewReported` ve `warextPmOpenContext` izinlerini açın.
+3. Geniş bağlam talep edecek gruba `warextPmRequestExtended` verin.
+4. Onaylayacak kıdemli gruba `warextPmApproveExtended` ve XenForo `Bypass user privacy` yetkisini verin.
+5. Audit yöneticilerine `warextPmViewAudit` verin.
+6. Kullanıcı aydınlatma metninde raporlanan özel mesaj ve gerekli sınırlı bağlam erişimini açıkça belirtin.
 
 ## Güvenlik sınırları
 
@@ -50,6 +54,10 @@ Buradaki `123`, XenForo rapor ID'sidir. Kullanıcı bu URL'yi açabilmek için X
 - Audit log'a mesaj gövdesi yazılmaz.
 - Bağlam erişimi gerekçe olmadan açılamaz.
 - Geniş erişim tek moderatörün anlık yetkisiyle açılamaz; kıdemli onay gerekir.
+
+## Release paketleme
+
+Geliştirme çıktısı (`_output`) yalnızca geliştirme içindir. XenForo release paketinde `_data` XML dosyaları ve `hashes.json` bulunmalıdır. Paket üretmek için repo kökünde `tools/Build-Release.ps1` scriptini çalıştırın. Script, `_output` içeriğinden `_data` XML’lerini üretir, `_output` klasörünü release ZIP’ine koymaz ve `hashes.json` oluşturur.
 
 ## Doğrulama
 
@@ -62,5 +70,8 @@ Bu repo XenForo'nun çekirdek kaynak kodunu veya lisanslı bir test kurulumu iç
 - kıdemli onay
 - süresi dolan erişim
 - kapatılmış raporda erişimin engellenmesi
+- her görüntüleme ve karar için audit olayının oluşması
+- kapatılan raporda bekleyen talebin `cancelled` olması
+- addon izinleri olmayan yöneticinin log/talep ekranlarına erişememesi
 
 Bu eklenti hukuki danışmanlık sağlamaz. Kurulumdan önce forumun aydınlatma metni, saklama politikası ve moderatör gizlilik prosedürü ayrıca gözden geçirilmelidir.

@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <routes>
-    <route route_type="admin" route_prefix="warext-pm-moderation" sub_name="" controller="Warext\\PrivateModeration:Moderation"/>
+    <route route_type="admin" route_prefix="warext-pm-moderation" sub_name="" controller="Warext\PrivateModeration:Moderation"/>
 </routes>

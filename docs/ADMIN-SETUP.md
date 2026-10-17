@@ -13,7 +13,7 @@ Admin CP tarafında:
 - Bekleyen bağlam talepleri listelenir.
 - Talepler onaylanır veya reddedilir.
 - Onay, talep eden moderatör için süreli erişim kaydı oluşturur.
-- Audit logları incelenir.
+- Audit logları incelenir ve rapor ID’sine göre filtrelenir.
 - Rapor bazında aktif erişimler iptal edilebilir.
 
 ## Moderatör paneli
@@ -24,4 +24,4 @@ Moderatör yalnızca XenForo rapor ID'siyle ilişkili conversation mesajını g�
 
 ## Güvenlik
 
-Admin CP erişimi yalnızca XenForo yöneticilerine açıktır. Geniş bağlam onayı verildiğinde erişim, talep sahibi moderatörün kullanıcı ID'sine bağlanır; onaylayan yönetici otomatik olarak mesaj içeriğine erişim kazanmaz.
+Admin CP erişimi XenForo yöneticilerine açıktır; işlem ekranları ayrıca addon izinleriyle korunur. Audit ekranı için warextPmViewAudit, talep kararları için warextPmApproveExtended ve XenForo bypassUserPrivacy birlikte gerekir. Geniş bağlam onayı verildiğinde erişim, talep sahibi moderatörün kullanıcı ID'sine bağlanır; onaylayan yönetici otomatik olarak mesaj içeriğine erişim kazanmaz.

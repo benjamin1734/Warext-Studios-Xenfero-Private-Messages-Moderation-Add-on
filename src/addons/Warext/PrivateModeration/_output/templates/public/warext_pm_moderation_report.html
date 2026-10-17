@@ -1,78 +1,97 @@
 <xf:title>Özel Mesaj Raporu #{$report.report_id}</xf:title>
 
-<xf:if is="$message">
+<div class="block">
+    <div class="block-container">
+        <div class="block-header">Raporlanan mesaj</div>
+        <div class="block-body">
+            <article class="message">
+                <div class="message-cell message-cell--main">
+                    <div class="message-attribution">
+                        <span class="u-muted">Mesaj #{$message.message_id}</span>
+                    </div>
+                    <div class="message-body">{$messageHtml|raw}</div>
+                </div>
+            </article>
+        </div>
+    </div>
+</div>
+
+<xf:if is="$activeAccess">
     <div class="block">
         <div class="block-container">
+            <div class="block-header">Bağlam erişimi aktif</div>
             <div class="block-body">
-                <article class="message">
-                    <div class="message-cell message-cell--main">
-                        <div class="message-attribution">
-                            <span class="message-attribution-main">Raporlanan mesaj</span>
-                            <span class="u-muted">Mesaj #{$message.message_id}</span>
+                <p class="u-muted">Bu erişim süreli ve yalnızca aynı conversation içindeki mesajlarla sınırlıdır.</p>
+                <xf:foreach loop="$context" value="$contextMessage">
+                    <article class="message">
+                        <div class="message-cell message-cell--main">
+                            <div class="message-attribution">
+                                <span class="u-muted">Mesaj #{$contextMessage.message_id}</span>
+                            </div>
+                            {$contextMessage.message|bb_code('conversation_message', $contextMessage)|raw}
                         </div>
-                        <div class="message-body">{$messageHtml|raw}</div>
-                    </div>
-                </article>
+                    </article>
+                </xf:foreach>
             </div>
         </div>
     </div>
-
-    <xf:if is="$activeAccess">
-        <div class="block">
-            <div class="block-container">
-                <div class="block-header">Sınırlı bağlam erişimi aktif</div>
-                <div class="block-body">
-                    <xf:foreach loop="$context" value="$contextMessage">
-                        <article class="message">
-                            <div class="message-cell message-cell--main">
-                                <div class="message-attribution">
-                                    <span class="u-muted">Mesaj #{$contextMessage.message_id}</span>
-                                </div>
-                                {$contextMessage.message|bb_code('conversation_message', $contextMessage)|raw}
-                            </div>
-                        </article>
-                    </xf:foreach>
-                </div>
-            </div>
-        </div>
-    <xf:else />
+<xf:else />
+    <xf:if is="$canOpenContext || $canRequestExtended">
         <div class="block">
             <div class="block-container">
                 <div class="block-header">Bağlam erişimi</div>
                 <div class="block-body">
-                    <form action="{{ link('warext-pm-moderation/reports/context', $report) }}" method="post" class="block-body">
+                    <form action="{{ link('warext-pm-moderation/reports/context', $report) }}" method="post">
                         <xf:csrf />
-                        <xf:textboxrow name="reason" label="Gerekçe" hint="5 mesaja kadar doğrudan açılır; daha fazlası kıdemli onayına gönderilir. Yalnızca bu raporla bağlantılı gerekçe yazın." required="true" />
+                        <xf:textboxrow name="reason" label="Gerekçe" hint="Erişim gerekçesi en az 10 karakter olmalıdır." required="true" />
                         <xf:numberboxrow name="depth" value="5" min="1" max="50" label="Mesaj sayısı" />
-                        <xf:submitrow submit="Bağlamı aç" />
+                        <xf:submitrow submit="Bağlamı aç veya talep et" />
                     </form>
                 </div>
             </div>
         </div>
     </xf:if>
-    <xf:if is="$pendingRequests">
-        <div class="block">
-            <div class="block-container">
-                <div class="block-header">Bekleyen geniş bağlam talepleri</div>
-                <div class="block-body">
-                    <xf:foreach loop="$pendingRequests" value="$request">
-                        <div class="block-row">
-                            <div><b>İstenen derinlik:</b> {$request.requested_depth}</div>
-                            <div><b>Gerekçe:</b> {$request.reason}</div>
-                            <xf:if is="$canApprove">
-                                <form action="{{ link('warext-pm-moderation/reports/approve', $report) }}" method="post">
-                                    <xf:csrf />
-                                    <input type="hidden" name="request_id" value="{$request.request_id}" />
-                                    <button type="submit" class="button button--primary">Onayla</button>
-                                </form>
-                            </xf:if>
-                        </div>
-                    </xf:foreach>
-                </div>
+</xf:if>
+
+<xf:if is="$pendingRequests">
+    <div class="block">
+        <div class="block-container">
+            <div class="block-header">Bekleyen geniş bağlam talepleri</div>
+            <div class="block-body">
+                <xf:foreach loop="$pendingRequests" value="$request">
+                    <div class="block-row">
+                        <div><b>Talep #{$request.request_id}</b> · Derinlik: {$request.requested_depth}</div>
+                        <div>Gerekçe: {$request.reason}</div>
+                        <xf:if is="$canApprove">
+                            <form action="{{ link('warext-pm-moderation/reports/approve', $report) }}" method="post" class="u-displayInline">
+                                <xf:csrf />
+                                <input type="hidden" name="request_id" value="{$request.request_id}" />
+                                <button type="submit" class="button button--primary">Onayla</button>
+                            </form>
+                            <form action="{{ link('warext-pm-moderation/reports/deny', $report) }}" method="post" class="u-displayInline">
+                                <xf:csrf />
+                                <input type="hidden" name="request_id" value="{$request.request_id}" />
+                                <input type="text" name="note" placeholder="Ret notu" />
+                                <button type="submit" class="button">Reddet</button>
+                            </form>
+                        </xf:if>
+                    </div>
+                </xf:foreach>
             </div>
         </div>
-    </xf:if>
+    </div>
+</xf:if>
 
-<xf:else />
-    <div class="blockMessage blockMessage--error">Raporlanan conversation mesajı bulunamadı.</div>
+<xf:if is="$canClose">
+    <div class="block">
+        <div class="block-container">
+            <div class="block-body">
+                <form action="{{ link('warext-pm-moderation/reports/close', $report) }}" method="post">
+                    <xf:csrf />
+                    <xf:textboxrow name="reason" label="Kapatma notu" />
+                    <xf:submitrow submit="Raporu kapat" />
+                </form>
+            </div>
+        </div>
+    </div>
 </xf:if>

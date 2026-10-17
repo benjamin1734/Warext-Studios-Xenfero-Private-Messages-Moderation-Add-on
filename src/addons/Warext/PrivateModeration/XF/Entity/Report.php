@@ -1,6 +1,8 @@
 <?php
 
-namespace Warext\\PrivateModeration\\XF\\Entity;
+namespace Warext\PrivateModeration\XF\Entity;
+
+use Warext\PrivateModeration\Service\ContextAccess;
 
 class Report extends XFCP_Report
 {
@@ -10,12 +12,7 @@ class Report extends XFCP_Report
 
         if ($this->isChanged('report_state') && $this->report_state === 'closed')
         {
-            \\XF::db()->update(
-                'xf_warext_pm_access_log',
-                ['expires_date' => \\XF::$time],
-                'report_id = ? AND expires_date > ?',
-                [(int)$this->report_id, \\XF::$time]
-            );
+            (new ContextAccess())->closeReportAccess((int) $this->report_id);
         }
     }
 }

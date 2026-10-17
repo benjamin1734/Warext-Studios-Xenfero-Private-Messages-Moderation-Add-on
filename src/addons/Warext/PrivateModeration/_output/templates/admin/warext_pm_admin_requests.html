@@ -3,28 +3,36 @@
 <div class="block">
     <div class="block-container">
         <div class="block-body">
-            <xf:foreach loop="$requests" value="$request">
-                <div class="block-row">
-                    <b>#{$request.request_id}</b>
-                    · Rapor #{$request.report_id}
-                    · Kullanıcı #{$request.requester_user_id}
-                    · Derinlik {$request.requested_depth}
-                    · Durum: {$request.status}
-                    <div>{$request.reason}</div>
-                    <xf:if is="$request.status == 'pending'">
-                        <form action="{{ link('warext-pm-moderation/approve') }}" method="post">
-                            <xf:csrf />
-                            <input type="hidden" name="request_id" value="{$request.request_id}" />
-                            <button class="button button--primary" type="submit">Onayla</button>
-                        </form>
-                        <form action="{{ link('warext-pm-moderation/deny') }}" method="post">
-                            <xf:csrf />
-                            <input type="hidden" name="request_id" value="{$request.request_id}" />
-                            <button class="button" type="submit">Reddet</button>
-                        </form>
-                    </xf:if>
-                </div>
-            </xf:foreach>
+            <xf:if is="$requests">
+                <xf:foreach loop="$requests" value="$request">
+                    <div class="block-row">
+                        <b>#{$request.request_id}</b>
+                        · Rapor #{$request.report_id}
+                        · Talep eden #{$request.requester_user_id}
+                        · Derinlik {$request.requested_depth}
+                        · Durum: {$request.status}
+                        <div>Gerekçe: {$request.reason}</div>
+                        <xf:if is="$request.reviewer_note">
+                            <div>İnceleme notu: {$request.reviewer_note}</div>
+                        </xf:if>
+                        <xf:if is="$request.status == 'pending'">
+                            <form action="{{ link('warext-pm-moderation/approve') }}" method="post" class="u-displayInline">
+                                <xf:csrf />
+                                <input type="hidden" name="request_id" value="{$request.request_id}" />
+                                <button class="button button--primary" type="submit">Onayla</button>
+                            </form>
+                            <form action="{{ link('warext-pm-moderation/deny') }}" method="post" class="u-displayInline">
+                                <xf:csrf />
+                                <input type="hidden" name="request_id" value="{$request.request_id}" />
+                                <input type="text" name="note" placeholder="Ret notu" />
+                                <button class="button" type="submit">Reddet</button>
+                            </form>
+                        </xf:if>
+                    </div>
+                </xf:foreach>
+            <xf:else />
+                <div class="blockMessage">Bekleyen veya geçmiş bağlam talebi bulunamadı.</div>
+            </xf:if>
         </div>
     </div>
 </div>
