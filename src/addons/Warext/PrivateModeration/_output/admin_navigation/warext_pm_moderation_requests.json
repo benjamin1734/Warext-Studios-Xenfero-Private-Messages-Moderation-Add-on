@@ -1,0 +1,12 @@
+{
+    "navigation_id": "warext_pm_moderation_requests",
+    "parent_navigation_id": "warext_pm_moderation",
+    "display_order": 20,
+    "link": "warext-pm-moderation/requests/",
+    "icon": "fa-tasks",
+    "admin_permission_id": "",
+    "debug_only": false,
+    "development_only": false,
+    "hide_no_children": false
+}
+
