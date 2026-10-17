@@ -63,10 +63,11 @@ $cronRoot = $cronDoc.DocumentElement
 Get-ChildItem (Join-Path $addonSource '_output/cron_entries/*.json') | ForEach-Object {
     $item = [System.IO.File]::ReadAllText($_.FullName, $utf8) | ConvertFrom-Json
     $node = $cronDoc.CreateElement('entry')
-    foreach ($name in 'entry_id', 'cron_expression', 'callback_class', 'callback_method') {
+    foreach ($name in 'entry_id', 'cron_class', 'cron_method') {
         Add-Attribute $cronDoc $node $name ([string] $item.$name)
     }
     Add-Attribute $cronDoc $node 'active' ($(if ($item.active) { '1' } else { '0' }))
+    [void] $node.AppendChild($cronDoc.CreateCDataSection(($item.run_rules | ConvertTo-Json -Compress -Depth 5)))
     [void] $cronRoot.AppendChild($node)
 }
 $cronDoc.Save((Join-Path $packageData 'cron.xml'))
@@ -95,19 +96,15 @@ $adminNavigationDoc = New-XmlDocument 'admin_navigation'
 $adminNavigationRoot = $adminNavigationDoc.DocumentElement
 Get-ChildItem (Join-Path $addonSource '_output/admin_navigation/*.json') | ForEach-Object {
     $item = [System.IO.File]::ReadAllText($_.FullName, $utf8) | ConvertFrom-Json
-    $node = $adminNavigationDoc.CreateElement('navigation_entry')
-    foreach ($name in 'navigation_id', 'parent_navigation_id', 'display_order', 'navigation_type_id') {
+    $node = $adminNavigationDoc.CreateElement('admin_navigation_entry')
+    foreach ($name in 'navigation_id', 'parent_navigation_id', 'display_order', 'link', 'icon', 'admin_permission_id') {
         if ($null -ne $item.$name -and [string] $item.$name) {
             Add-Attribute $adminNavigationDoc $node $name ([string] $item.$name)
         }
     }
-    Add-Attribute $adminNavigationDoc $node 'enabled' ($(if ($item.enabled) { '1' } else { '0' }))
-    $payload = [ordered] @{
-        link = [string] $item.link
-        display_condition = [string] $item.display_condition
-        extra_attributes = $item.extra_attributes
+    foreach ($name in 'debug_only', 'development_only', 'hide_no_children') {
+        Add-Attribute $adminNavigationDoc $node $name ($(if ($item.$name) { '1' } else { '0' }))
     }
-    [void] $node.AppendChild($adminNavigationDoc.CreateCDataSection(($payload | ConvertTo-Json -Compress -Depth 5)))
     [void] $adminNavigationRoot.AppendChild($node)
 }
 $adminNavigationDoc.Save((Join-Path $packageData 'admin_navigation.xml'))
@@ -176,4 +173,3 @@ Compress-Archive -Path (Join-Path $stage '*') -DestinationPath $zipPath -Compres
 Remove-Item -LiteralPath $stage -Recurse -Force
 
 Write-Output $zipPath
-
