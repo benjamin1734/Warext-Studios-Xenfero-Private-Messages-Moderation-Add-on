@@ -4,6 +4,8 @@
 
 Addon kurulduktan sonra yönetim paneli:
 
+- Admin CP > Content altında “Özel Mesaj Moderasyonu” menüsü.
+
 - `admin.php?warext-pm-moderation/`
 - `admin.php?warext-pm-moderation/requests/`
 - `admin.php?warext-pm-moderation/logs/`
@@ -20,8 +22,11 @@ Admin CP tarafında:
 
 - `warext-pm-moderation/reports/{report_id}/`
 
+`warextPmModerateMessage` yetkisi olan moderatör, raporlanan mesajı gerekçe ile silebilir. XenForo native `canDelete()` kontrolü başarısızsa işlem durur; başarılı işlem raporu kapatır ve audit kaydı oluşturur.
+
 Moderatör yalnızca XenForo rapor ID'siyle ilişkili conversation mesajını görür. Bağlam açma işlemi gerekçe ister.
 
 ## Güvenlik
 
 Admin CP erişimi XenForo yöneticilerine açıktır; işlem ekranları ayrıca addon izinleriyle korunur. Audit ekranı için warextPmViewAudit, talep kararları için warextPmApproveExtended ve XenForo bypassUserPrivacy birlikte gerekir. Geniş bağlam onayı verildiğinde erişim, talep sahibi moderatörün kullanıcı ID'sine bağlanır; onaylayan yönetici otomatik olarak mesaj içeriğine erişim kazanmaz.
+
