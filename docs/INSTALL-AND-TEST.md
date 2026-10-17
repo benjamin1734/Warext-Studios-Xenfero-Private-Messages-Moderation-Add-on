@@ -15,6 +15,7 @@ Bu klasörü XenForo kurulumundaki aynı konuma yerleştirin. XenForo geliştirm
 - Geniş bağlam talep edecek moderatörler: addon `warextPmRequestExtended`.
 - Geniş bağlam onaylayacak kıdemli moderatörler: addon `warextPmApproveExtended` ve XenForo `general > bypassUserPrivacy`.
 - Audit ekranını görecek yöneticiler: addon `warextPmViewAudit`.
+- Raporlanan mesajda işlem uygulayacak moderatörler: addon `warextPmModerateMessage`; ayrıca XenForo'nun native conversation message silme kontrolü geçilmelidir.
 
 Eklenti tüm özel mesajları taramaz ve başka conversation'lara erişim sağlamaz.
 
@@ -37,4 +38,6 @@ Eklenti tüm özel mesajları taramaz ve başka conversation'lara erişim sağla
 - Yetkisiz hesabın rapor ve onay endpoint'lerine erişemediğini doğrulayın.
 - Süresi geçmiş erişimin bağlam göstermediğini doğrulayın.
 - Kapatılan raporun erişimi engellediğini doğrulayın.
+- `warextPmModerateMessage` yetkili moderatörün en az 10 karakter gerekçeyle raporlanan mesajı silebildiğini, raporun kapandığını ve `delete_message` audit olayının oluştuğunu doğrulayın.
+- Bu yetki olmayan hesabın mesaj işlemi endpoint'ine erişemediğini doğrulayın.
 
