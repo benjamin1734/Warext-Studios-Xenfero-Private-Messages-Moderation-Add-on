@@ -53,9 +53,7 @@ class Moderation extends AbstractController
         $context = [];
         if ($activeAccess)
         {
-            $depth = ($activeAccess['access_type'] === 'extended_context')
-                ? 50
-                : ContextAccess::DEFAULT_DEPTH;
+            $depth = (int)$activeAccess['context_depth'];
             $context = $this->access()->getAdjacentMessages($message, $depth);
         }
 
