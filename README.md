@@ -36,16 +36,19 @@ Buradaki `123`, XenForo rapor ID'sidir. Kullanıcı bu URL'yi açabilmek için a
 - Bağlam talepleri: `admin.php?warext-pm-moderation/requests/`
 - Audit logları: `admin.php?warext-pm-moderation/logs/`
 - Admin CP üzerinden talepler onaylanabilir/reddedilebilir ve erişimler yönetilebilir.
+- Admin CP içinde doğrudan “Özel Mesaj Moderasyonu” menüsü bulunur.
+- `warextPmModerateMessage` yetkisi olan moderatör, raporlanan mesaj için gerekçe yazarak XenForo'nun native `canDelete()` kontrolünden geçen silme işlemini uygulayabilir; rapor otomatik kapanır ve işlem audit'e yazılır.
 - Moderatör panelinden rapor kapatılabilir; kapatma işlemi aktif erişimleri ve bekleyen talepleri iptal eder.
 
 ## Kurulum
 
-1. `_releases/Warext-PrivateModeration-1.1.0.zip` paketini Admin CP > Add-ons > Install/upgrade bölümünden yükleyin.
+1. `_releases/Warext-PrivateModeration-1.2.0.zip` paketini Admin CP > Add-ons > Install/upgrade bölümünden yükleyin.
 2. Moderatör grubunda `warextPmViewReported` ve `warextPmOpenContext` izinlerini açın.
 3. Geniş bağlam talep edecek gruba `warextPmRequestExtended` verin.
 4. Onaylayacak kıdemli gruba `warextPmApproveExtended` ve XenForo `Bypass user privacy` yetkisini verin.
 5. Audit yöneticilerine `warextPmViewAudit` verin.
-6. Kullanıcı aydınlatma metninde raporlanan özel mesaj ve gerekli sınırlı bağlam erişimini açıkça belirtin.
+6. Mesaj üzerinde işlem yapacak moderatörlere `warextPmModerateMessage` verin; XenForo native içerik silme kontrolü ayrıca zorunludur.
+7. Kullanıcı aydınlatma metninde raporlanan özel mesaj ve gerekli sınırlı bağlam erişimini açıkça belirtin.
 
 ## Güvenlik sınırları
 
@@ -75,3 +78,4 @@ Bu repo XenForo'nun çekirdek kaynak kodunu veya lisanslı bir test kurulumu iç
 - addon izinleri olmayan yöneticinin log/talep ekranlarına erişememesi
 
 Bu eklenti hukuki danışmanlık sağlamaz. Kurulumdan önce forumun aydınlatma metni, saklama politikası ve moderatör gizlilik prosedürü ayrıca gözden geçirilmelidir.
+
