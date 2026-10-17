@@ -198,6 +198,7 @@ class ContextAccess
             'message_id' => (int)$message->message_id,
             'viewer_user_id' => $viewerId ?: (int)\\XF::visitor()->user_id,
             'access_type' => $accessType,
+            'context_depth' => $depth,
             'reason' => $reason,
             'created_date' => $now,
             'expires_date' => $now + $ttl,
