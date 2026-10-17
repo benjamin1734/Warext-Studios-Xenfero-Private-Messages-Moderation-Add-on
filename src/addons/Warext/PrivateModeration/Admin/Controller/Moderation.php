@@ -46,6 +46,32 @@ class Moderation extends AbstractController
         return $this->view('Warext\\PrivateModeration:Admin\\Logs', 'warext_pm_admin_logs', compact('logs'));
     }
 
+    public function actionApprove()
+    {
+        $this->assertPostOnly();
+        $requestId = $this->filter('request_id', 'uint');
+        \\XF::db()->update('xf_warext_pm_context_request', [
+            'status' => 'approved',
+            'reviewer_user_id' => (int)\\XF::visitor()->user_id,
+            'reviewed_date' => \\XF::$time
+        ], 'request_id = ? AND status = ?', [$requestId, 'pending']);
+
+        return $this->redirect($this->buildLink('warext-pm-moderation/requests'));
+    }
+
+    public function actionDeny()
+    {
+        $this->assertPostOnly();
+        $requestId = $this->filter('request_id', 'uint');
+        \\XF::db()->update('xf_warext_pm_context_request', [
+            'status' => 'denied',
+            'reviewer_user_id' => (int)\\XF::visitor()->user_id,
+            'reviewed_date' => \\XF::$time
+        ], 'request_id = ? AND status = ?', [$requestId, 'pending']);
+
+        return $this->redirect($this->buildLink('warext-pm-moderation/requests'));
+    }
+
     public function actionRevoke()
     {
         $this->assertPostOnly();
