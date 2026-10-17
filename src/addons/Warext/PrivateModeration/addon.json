@@ -1,8 +1,8 @@
 {
   "title": "Warext Private Messages Moderation System",
   "description": "Controlled, report-scoped moderation access for XenForo private conversation messages.",
-  "version_id": 1000050,
-  "version_string": "1.2.1",
+  "version_id": 1000060,
+  "version_string": "1.2.2",
   "dev": "Warext Studios",
   "dev_url": "https://github.com/benjamin1734",
   "support_url": "https://github.com/benjamin1734/Warext-Studios-Xenfero-Private-Messages-Moderation-Add-on",
@@ -10,4 +10,3 @@
     "XF": [2020000, "XenForo 2.2.0+"]
   }
 }
-
