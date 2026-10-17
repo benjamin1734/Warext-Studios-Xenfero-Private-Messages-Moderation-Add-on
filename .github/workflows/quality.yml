@@ -1,0 +1,31 @@
+name: Warext Private Moderation local quality
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: warext-private-moderation-quality-\${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Validate metadata, source and install archive
+        shell: pwsh
+        run: ./tools/Validate-Release.ps1
+
