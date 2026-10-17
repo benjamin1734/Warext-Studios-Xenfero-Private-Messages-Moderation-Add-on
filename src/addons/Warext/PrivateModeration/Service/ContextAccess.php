@@ -44,22 +44,22 @@ class ContextAccess
         $messageId = (int)$message->message_id;
 
         $before = $db->fetchAll(
-            $db->limit('
-                SELECT *
-                FROM xf_conversation_message
-                WHERE conversation_id = ? AND message_id < ?
-                ORDER BY message_id DESC
-            ', $depth),
+            $db->limit(
+                'SELECT * FROM xf_conversation_message
+                 WHERE conversation_id = ? AND message_id < ?
+                 ORDER BY message_id DESC',
+                $depth
+            ),
             [$conversationId, $messageId]
         );
 
         $after = $db->fetchAll(
-            $db->limit('
-                SELECT *
-                FROM xf_conversation_message
-                WHERE conversation_id = ? AND message_id > ?
-                ORDER BY message_id ASC
-            ', $depth),
+            $db->limit(
+                'SELECT * FROM xf_conversation_message
+                 WHERE conversation_id = ? AND message_id > ?
+                 ORDER BY message_id ASC',
+                $depth
+            ),
             [$conversationId, $messageId]
         );
 
@@ -73,40 +73,6 @@ class ContextAccess
     public function grantLimitedAccess(Entity $report, Entity $message, string $reason, int $depth = self::DEFAULT_DEPTH): int
     {
         return $this->grantAccess($report, $message, 'limited_context', $reason, $depth, self::LIMITED_TTL);
-    }
-
-    public function grantExtendedAccess(Entity $report, Entity $message, string $reason, int $depth, int $approverId): int
-    {
-        return $this->grantAccess($report, $message, 'extended_context', $reason, $depth, self::EXTENDED_TTL, $approverId);
-    }
-
-    protected function grantAccess(
-        Entity $report,
-        Entity $message,
-        string $accessType,
-        string $reason,
-        int $depth,
-        int $ttl,
-        int $approverId = 0
-    ): int
-    {
-        $now = \\XF::$time;
-        $db = \\XF::db();
-
-        $db->insert('xf_warext_pm_access_log', [
-            'report_id' => (int)$report->report_id,
-            'request_id' => 0,
-            'conversation_id' => (int)$message->conversation_id,
-            'message_id' => (int)$message->message_id,
-            'viewer_user_id' => (int)\\XF::visitor()->user_id,
-            'access_type' => $accessType,
-            'reason' => $reason,
-            'created_date' => $now,
-            'expires_date' => $now + $ttl,
-            'approved_by_user_id' => $approverId
-        ]);
-
-        return $depth;
     }
 
     public function createExtendedRequest(Entity $report, Entity $message, string $reason, int $depth): int
@@ -124,6 +90,63 @@ class ContextAccess
         ]);
 
         return (int)$db->lastInsertId();
+    }
+
+    public function getPendingRequests(int $reportId): array
+    {
+        return \\XF::db()->fetchAll(
+            'SELECT * FROM xf_warext_pm_context_request
+             WHERE report_id = ? AND status = ?
+             ORDER BY created_date ASC',
+            [$reportId, 'pending']
+        );
+    }
+
+    public function approveExtendedRequest(int $requestId): bool
+    {
+        if (!$this->canApproveExtended())
+        {
+            return false;
+        }
+
+        $db = \\XF::db();
+        $request = $db->fetchRow(
+            'SELECT * FROM xf_warext_pm_context_request
+             WHERE request_id = ? AND status = ?',
+            [$requestId, 'pending']
+        );
+
+        if (!$request)
+        {
+            return false;
+        }
+
+        $report = \\XF::em()->find('XF:Report', (int)$request['report_id']);
+        $message = \\XF::em()->find('XF:ConversationMessage', (int)$request['message_id']);
+        if (!$report || !$message || !$this->isConversationReport($report))
+        {
+            return false;
+        }
+
+        $this->grantAccess(
+            $report,
+            $message,
+            'extended_context',
+            $request['reason'],
+            (int)$request['requested_depth'],
+            self::EXTENDED_TTL,
+            (int)$request['reviewer_user_id'],
+            (int)$request['requester_user_id'],
+            $requestId
+        );
+
+        $db->update('xf_warext_pm_context_request', [
+            'status' => 'approved',
+            'reviewer_user_id' => (int)\\XF::visitor()->user_id,
+            'reviewed_date' => \\XF::$time
+        ], 'request_id = ?', $requestId);
+
+        return true;
     }
 
     public function hasActiveAccess(Entity $report, Entity $message): ?array
@@ -151,5 +174,36 @@ class ContextAccess
             'report_id = ? AND expires_date > ?',
             [$reportId, \\XF::$time]
         );
+    }
+
+    protected function grantAccess(
+        Entity $report,
+        Entity $message,
+        string $accessType,
+        string $reason,
+        int $depth,
+        int $ttl,
+        int $approverId = 0,
+        int $viewerId = 0,
+        int $requestId = 0
+    ): int
+    {
+        $now = \\XF::$time;
+        $db = \\XF::db();
+
+        $db->insert('xf_warext_pm_access_log', [
+            'report_id' => (int)$report->report_id,
+            'request_id' => $requestId,
+            'conversation_id' => (int)$message->conversation_id,
+            'message_id' => (int)$message->message_id,
+            'viewer_user_id' => $viewerId ?: (int)\\XF::visitor()->user_id,
+            'access_type' => $accessType,
+            'reason' => $reason,
+            'created_date' => $now,
+            'expires_date' => $now + $ttl,
+            'approved_by_user_id' => $approverId
+        ]);
+
+        return $depth;
     }
 }
