@@ -80,6 +80,10 @@ class Moderation extends AbstractController
     public function actionContext(ParameterBag $params)
     {
         $this->assertPostOnly();
+        if (!\\XF::visitor()->hasPermission('forum', 'warextPmOpenContext'))
+        {
+            throw $this->exception($this->noPermission());
+        }
         $report = $this->getReport((int)$params->report_id);
         $message = $this->access()->getMessage($report);
         $reason = trim($this->filter('reason', 'str'));
