@@ -42,8 +42,8 @@
                 <div class="block-body">
                     <form action="{{ link('warext-pm-moderation/reports/context', $report) }}" method="post" class="block-body">
                         <xf:csrf />
-                        <xf:textboxrow name="reason" label="Gerekçe" hint="Yalnızca bu raporla bağlantılı ve gerekli bağlamı açıklayın." required="true" />
-                        <xf:numberboxrow name="depth" value="5" min="1" max="5" label="Mesaj sayısı" />
+                        <xf:textboxrow name="reason" label="Gerekçe" hint="5 mesaja kadar doğrudan açılır; daha fazlası kıdemli onayına gönderilir. Yalnızca bu raporla bağlantılı gerekçe yazın." required="true" />
+                        <xf:numberboxrow name="depth" value="5" min="1" max="50" label="Mesaj sayısı" />
                         <xf:submitrow submit="Bağlamı aç" />
                     </form>
                 </div>
