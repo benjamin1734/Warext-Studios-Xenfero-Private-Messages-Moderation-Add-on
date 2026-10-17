@@ -39,6 +39,47 @@ class ContextAccess
         return \XF::visitor()->hasPermission('forum', 'warextPmViewAudit');
     }
 
+    public function canModerateMessage(): bool
+    {
+        return \XF::visitor()->hasPermission('forum', 'warextPmModerateMessage');
+    }
+
+    public function deleteReportedMessage(Entity $report, Entity $message, string $reason): bool
+    {
+        if (!$this->canModerateMessage()
+            || !$this->isConversationReport($report)
+            || (int) $report->content_id !== (int) $message->message_id
+            || !$message->exists()
+            || !method_exists($message, 'delete')
+        )
+        {
+            return false;
+        }
+
+        if (method_exists($message, 'canDelete') && !$message->canDelete())
+        {
+            return false;
+        }
+
+        $reportId = (int) $report->report_id;
+        $messageId = (int) $message->message_id;
+        $conversationId = (int) $message->conversation_id;
+        $message->delete();
+
+        $this->recordAudit('moderation_action', null, null, [
+            'report_id' => $reportId,
+            'conversation_id' => $conversationId,
+            'message_id' => $messageId,
+            'message_ids' => [$messageId],
+            'action' => 'delete_message',
+            'reason' => $reason
+        ]);
+
+        $report->report_state = 'closed';
+        $report->save();
+        return true;
+    }
+
     public function isConversationReport(Entity $report): bool
     {
         return $report->content_type === 'conversation_message' && (int) $report->content_id > 0;
@@ -382,3 +423,4 @@ class ContextAccess
         return (int) $db->lastInsertId();
     }
 }
+
