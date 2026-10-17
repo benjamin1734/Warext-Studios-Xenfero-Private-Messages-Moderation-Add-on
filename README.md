@@ -4,8 +4,8 @@
 
 Controlled, report-scoped moderation access for XenForo private conversation messages. The add-on is designed around data minimisation: a moderator starts with the reported message, can open only the necessary nearby context, and must use a reason plus senior approval for wider access.
 
-> **Current release:** [v1.2.3](https://github.com/benjamin1734/Warext-Studios-Xenfero-Private-Messages-Moderation-Add-on/releases/tag/v1.2.3)  
-> **Install ZIP:** [Warext-PrivateModeration-1.2.3.zip](https://github.com/benjamin1734/Warext-Studios-Xenfero-Private-Messages-Moderation-Add-on/releases/download/v1.2.3/Warext-PrivateModeration-1.2.3.zip)
+> **Current release:** [v1.2.4](https://github.com/benjamin1734/Warext-Studios-Xenfero-Private-Messages-Moderation-Add-on/releases/tag/v1.2.4)  
+> **Install ZIP:** [Warext-PrivateModeration-1.2.4.zip](https://github.com/benjamin1734/Warext-Studios-Xenfero-Private-Messages-Moderation-Add-on/releases/download/v1.2.4/Warext-PrivateModeration-1.2.4.zip)
 
 ### Features
 
@@ -31,7 +31,7 @@ Controlled, report-scoped moderation access for XenForo private conversation mes
 
 1. Download the [latest release ZIP](https://github.com/benjamin1734/Warext-Studios-Xenfero-Private-Messages-Moderation-Add-on/releases).
 2. In XenForo Admin CP, open **Add-ons → Install/upgrade from archive**.
-3. Upload Warext-PrivateModeration-1.2.3.zip as-is. Do not extract and re-zip it.
+3. Upload Warext-PrivateModeration-1.2.4.zip as-is. Do not extract and re-zip it.
 4. Configure the permissions described in [docs/ADMIN-SETUP.md](docs/ADMIN-SETUP.md).
 5. Add the private-message moderation disclosure to the forum privacy/information notice.
 
@@ -66,6 +66,10 @@ Extended approval also checks XenForo's native bypassUserPrivacy permission. The
 - Admin CP dashboard: admin.php?warext-pm-moderation/
 - Context requests: admin.php?warext-pm-moderation/requests/
 - Audit logs: admin.php?warext-pm-moderation/logs/
+
+In Admin CP, open the top-level Warext Private Messages Moderation category in the left navigation. Use Panel for the counters and quick links, Context Requests for senior approval or rejection, and Audit Logs for access and action history. The category is separate from XenForo's built-in Content navigation.
+
+To review a reported private message, open XenForo Reports, note the report ID, and open the moderator report URL with that ID. The add-on intentionally does not offer unrestricted conversation search; every review starts from a report.
 
 ### Privacy and security model
 
@@ -112,8 +116,8 @@ For questions, installation help and bug reports, use the [GitHub Issues](https:
 
 XenForo özel konuşma mesajlarına rapor kapsamında, sınırlı ve denetlenebilir moderasyon erişimi sağlar. Tasarım veri minimizasyonuna dayanır: moderatör ilk olarak yalnızca raporlanan mesajı görür, gerekli yakın bağlamı gerekçe yazarak açar; daha geniş erişim için kıdemli onayı gerekir.
 
-> **Güncel sürüm:** [v1.2.3](https://github.com/benjamin1734/Warext-Studios-Xenfero-Private-Messages-Moderation-Add-on/releases/tag/v1.2.3)  
-> **Kurulum ZIP'i:** [Warext-PrivateModeration-1.2.3.zip](https://github.com/benjamin1734/Warext-Studios-Xenfero-Private-Messages-Moderation-Add-on/releases/download/v1.2.3/Warext-PrivateModeration-1.2.3.zip)
+> **Güncel sürüm:** [v1.2.4](https://github.com/benjamin1734/Warext-Studios-Xenfero-Private-Messages-Moderation-Add-on/releases/tag/v1.2.4)  
+> **Kurulum ZIP'i:** [Warext-PrivateModeration-1.2.4.zip](https://github.com/benjamin1734/Warext-Studios-Xenfero-Private-Messages-Moderation-Add-on/releases/download/v1.2.4/Warext-PrivateModeration-1.2.4.zip)
 
 ### Özellikler
 
@@ -139,7 +143,7 @@ XenForo özel konuşma mesajlarına rapor kapsamında, sınırlı ve denetlenebi
 
 1. [Güncel release ZIP'ini](https://github.com/benjamin1734/Warext-Studios-Xenfero-Private-Messages-Moderation-Add-on/releases) indirin.
 2. XenForo Admin CP içinde **Eklentiler → Arşivden yükle/yükselt** bölümünü açın.
-3. Warext-PrivateModeration-1.2.3.zip dosyasını olduğu gibi yükleyin; dosyayı açıp tekrar ZIP yapmayın.
+3. Warext-PrivateModeration-1.2.4.zip dosyasını olduğu gibi yükleyin; dosyayı açıp tekrar ZIP yapmayın.
 4. [docs/ADMIN-SETUP.md](docs/ADMIN-SETUP.md) içindeki eklenti ve XenForo yetkilerini yapılandırın.
 5. Forumun aydınlatma/gizlilik metnine özel mesaj moderasyonu açıklamasını ekleyin.
 
@@ -174,6 +178,10 @@ Geniş bağlam onayında XenForo'nun native bypassUserPrivacy yetkisi de kontrol
 - Admin CP paneli: admin.php?warext-pm-moderation/
 - Bağlam talepleri: admin.php?warext-pm-moderation/requests/
 - Denetim kayıtları: admin.php?warext-pm-moderation/logs/
+
+Admin CP'de sol menüdeki bağımsız Warext Private Messages Moderation kategorisini açın. Panel sayaçları ve hızlı bağlantıları, Bağlam Talepleri kıdemli onay/reddetme ekranını, Denetim Kayıtları ise erişim ve işlem geçmişini açar. Kategori artık XenForo'nun yerleşik Content menüsünden ayrıdır.
+
+Raporlanan özel mesajı incelemek için XenForo Raporlar bölümünü açın, rapor ID'sini alın ve bu ID'yi moderatör rapor URL'sindeki {report_id} yerine yazın. Eklenti sınırsız konuşma araması sunmaz; her inceleme bir raporla başlar.
 
 ### KVKK ve güvenlik modeli
 
