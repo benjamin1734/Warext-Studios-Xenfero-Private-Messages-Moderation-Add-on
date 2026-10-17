@@ -27,6 +27,14 @@ Raporlanan conversation mesajı için:
 
 Buradaki `123`, XenForo rapor ID'sidir. Kullanıcı bu URL'yi açabilmek için XenForo'nun `general > warn` yetkisine sahip olmalıdır.
 
+## Admin CP ve moderatör paneli
+
+- Moderatör paneli: `/warext-pm-moderation/reports/{report_id}/`
+- Admin CP dashboard: `admin.php?warext-pm-moderation/`
+- Bağlam talepleri: `admin.php?warext-pm-moderation/requests/`
+- Audit logları: `admin.php?warext-pm-moderation/logs/`
+- Admin CP üzerinden talepler onaylanabilir/reddedilebilir ve erişimler yönetilebilir.
+
 ## Kurulum
 
 1. `src/addons/Warext/PrivateModeration` klasörünü XenForo kurulumundaki `src/addons/Warext/PrivateModeration` yoluna kopyalayın.
