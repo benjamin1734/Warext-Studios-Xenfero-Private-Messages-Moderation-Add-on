@@ -53,7 +53,9 @@ class Moderation extends AbstractController
         $context = [];
         if ($activeAccess)
         {
-            $depth = ($activeAccess['access_type'] === 'extended_context') ? 50 : ContextAccess::DEFAULT_DEPTH;
+            $depth = ($activeAccess['access_type'] === 'extended_context')
+                ? 50
+                : ContextAccess::DEFAULT_DEPTH;
             $context = $this->access()->getAdjacentMessages($message, $depth);
         }
 
@@ -65,7 +67,9 @@ class Moderation extends AbstractController
                 'message' => $message,
                 'messageHtml' => $this->renderMessage($message),
                 'context' => $context,
-                'activeAccess' => $activeAccess
+                'activeAccess' => $activeAccess,
+                'pendingRequests' => $this->access()->getPendingRequests((int)$report->report_id),
+                'canApprove' => $this->access()->canApproveExtended()
             ]
         );
     }
@@ -86,10 +90,27 @@ class Moderation extends AbstractController
         if ($depth > ContextAccess::DEFAULT_DEPTH)
         {
             $this->access()->createExtendedRequest($report, $message, $reason, $depth);
-            return $this->redirect($this->buildLink('warext-pm-moderation/reports', $report->report_id));
+        }
+        else
+        {
+            $this->access()->grantLimitedAccess($report, $message, $reason, $depth);
         }
 
-        $this->access()->grantLimitedAccess($report, $message, $reason, $depth);
+        return $this->redirect($this->buildLink('warext-pm-moderation/reports', $report->report_id));
+    }
+
+    public function actionApprove(ParameterBag $params)
+    {
+        $this->assertPostOnly();
+        $report = $this->getReport((int)$params->report_id);
+        $requestId = $this->filter('request_id', 'uint');
+
+        if (!$this->access()->canApproveExtended())
+        {
+            throw $this->exception($this->noPermission());
+        }
+
+        $this->access()->approveExtendedRequest($requestId);
         return $this->redirect($this->buildLink('warext-pm-moderation/reports', $report->report_id));
     }
 
